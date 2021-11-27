@@ -1,14 +1,15 @@
 {
     "compileOnSave": true,
     "compilerOptions": {
-      "target": "ES2015",
-      "module": "es2015",
+      "target": "esnext",
+      "module": "amd",
       "strict": true,
       "experimentalDecorators": true,
       "noFallthroughCasesInSwitch": true,
       "noImplicitReturns": true,
       "noUnusedLocals": true,
-      "noUnusedParameters": true
+      "noUnusedParameters": true,
+      "outFile": "index.js",
     },
     "files": [
         "src/quiz.ts",

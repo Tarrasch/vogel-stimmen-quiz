@@ -1,4 +1,4 @@
-import { BIRDS } from "./species";
+"use strict";
 function makeRecording(input) {
     return {
         soundFileUrl: `https:${input.file}`,
@@ -61,3 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateHtmlElements(birdToGuess, recording);
     });
 });
+const BIRDS = [
+    { queryName: "Parus Major", germanName: "Kohlmeise", },
+    { queryName: "Cyanistes Caeruleus", germanName: "Blaumeise", },
+];
