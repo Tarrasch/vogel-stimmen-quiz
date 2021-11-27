@@ -1,3 +1,5 @@
+import {Bird, BIRDS} from "./species";
+
 interface Recording {
     soundFileUrl: string;
     recorderName: string;
@@ -31,16 +33,6 @@ function makeXenoCantoApiResponse(input: any): XenoCantoApiResponse {
         recordings: input.recordings.map(makeRecording),
     }
 }
-
-interface Bird {
-    queryName: string; // Its scientific name
-    germanName: string;
-}
-
-const BIRDS: Bird[] = [
-    { queryName: "Parus Major", germanName: "Kohlmeise", },
-    { queryName: "Cyanistes Caeruleus", germanName: "Blaumeise", },
-]
 
 interface QueryOptions {
     birdQueryName: string,
@@ -87,13 +79,15 @@ function updateHtmlElements(birdToGuess: Bird, recording: Recording) {
         choicesDiv.appendChild(newButton);
     }
 }
+console.log("Got here!");
+document.addEventListener("DOMContentLoaded", function() {
+    let birdToGuess = selectRandomBird();
 
-let birdToGuess = selectRandomBird();
-
-fetch(getApiUrl(buildQuery({ birdQueryName: birdToGuess.queryName })))
-    .then(response => response.json())
-    .then(data => {
-        let response: XenoCantoApiResponse = makeXenoCantoApiResponse(data);
-        let recording: Recording = selectRandomRecording(response)
-        updateHtmlElements(birdToGuess, recording);
-    });
+    fetch(getApiUrl(buildQuery({ birdQueryName: birdToGuess.queryName })))
+        .then(response => response.json())
+        .then(data => {
+            let response: XenoCantoApiResponse = makeXenoCantoApiResponse(data);
+            let recording: Recording = selectRandomRecording(response)
+            updateHtmlElements(birdToGuess, recording);
+        });
+});
