@@ -1,3 +1,5 @@
+import {Bird, BIRDS} from "./species";
+
 interface Recording {
     soundFileUrl: string;
     recorderName: string;
