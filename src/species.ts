@@ -8,6 +8,12 @@ export const BIRDS: Bird[] = [
     { queryName: "Parus Major", germanName: "Kohlmeise", searchParamCode: "km", },
     { queryName: "Cyanistes Caeruleus", germanName: "Blaumeise", searchParamCode: "bm", },
     { queryName: "Periparus ater", germanName: "Tannenmeise", searchParamCode: "tm", },
+    { queryName: "Dendrocopos major", germanName: "Buntspecht", searchParamCode: "bs", },
+    { queryName: "Troglodytes troglodytes", germanName: "Zaunkönig", searchParamCode: "zk", },
+    { queryName: "Erithacus rubecula", germanName: "Rotkehlchen", searchParamCode: "rk", },
+    { queryName: "Phylloscopus collybita", germanName: "Zilpzalp", searchParamCode: "zz", },
+    { queryName: "Sitta europaea", germanName: "Kleiber", searchParamCode: "kl", },
+    { queryName: "Garrulus glandarius", germanName: "Eichelhäher", searchParamCode: "eh", },
 ]
 
 export function getBirdsFromSearchParamsOrAll(params: URLSearchParams): Bird[] {
