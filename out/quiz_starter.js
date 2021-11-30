@@ -1,0 +1,1 @@
+!function(){"use strict";function e(){let e=new URL("./quiz.html",document.baseURI);e.searchParams.set("species","km,bm"),document.location.href=e.href}document.addEventListener("DOMContentLoaded",function(){var t;null===(t=document.getElementById("start-quiz"))||void 0===t||t.addEventListener("click",e)})}();

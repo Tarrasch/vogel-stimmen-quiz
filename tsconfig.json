@@ -1,18 +1,19 @@
 {
-    "compileOnSave": true,
-    "compilerOptions": {
-      "target": "ES2015",
-      "module": "es2015",
-      "strict": true,
-      "experimentalDecorators": true,
-      "noFallthroughCasesInSwitch": true,
-      "noImplicitReturns": true,
-      "noUnusedLocals": true,
-      "noUnusedParameters": true,
-      "outDir": "gen.js",
-    },
-    "files": [
-        // It seems only "roots"/"mains" are required.
-        "src/quiz.ts",
-    ]
-  }
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "es2015",
+    "strict": true,
+    "experimentalDecorators": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "gen.js",
+  },
+  "files": [
+    // It seems only "roots"/"mains" are required.
+    "src/quiz.ts",
+    "src/quiz_starter.ts",
+  ]
+}
