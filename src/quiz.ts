@@ -1,5 +1,5 @@
-import { Bird } from "./species";
-import * as Species from "./species";
+import { Bird } from "./model/species";
+import * as Species from "./model/species";
 import { Recording, XenoCantoApiResponse } from "./xeno_canto_api";
 import * as XenoCantoApi from "./xeno_canto_api";
 
