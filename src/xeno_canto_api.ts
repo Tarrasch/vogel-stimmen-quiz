@@ -15,7 +15,7 @@ export interface XenoCantoApiResponse {
 
 function makeRecording(input: any): Recording {
     return {
-        soundFileUrl: `https:${input.file}`,
+        soundFileUrl: input.file,
         recorderName: input.rec,
         englishName: input.en,
         genericName: input.gen,
