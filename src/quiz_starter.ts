@@ -1,4 +1,4 @@
-import { Bird, BIRDS, getSearchParamStringFromBirds } from "./species";
+import { Bird, BIRDS, getSearchParamStringFromBirds } from "./model/species";
 
 function startQuiz(): void {
     let url = new URL("./quiz.html", document.baseURI);

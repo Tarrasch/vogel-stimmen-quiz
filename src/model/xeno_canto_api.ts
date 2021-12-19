@@ -13,6 +13,11 @@ export interface XenoCantoApiResponse {
     recordings: Recording[];
 }
 
+export interface XenoCantoParameters {
+    query: string,
+    pageNumber: number,  // Note: xeno-canto API uses a 1 indexed number here.
+}
+
 function makeRecording(input: any): Recording {
     return {
         soundFileUrl: input.file,
@@ -36,6 +41,6 @@ function wrapInJsonProxy(url: string): string {
     return `https://jsonp.afeld.me/?url=${url}`
 }
 
-export function getApiUrl(raw_query: string): string {
-    return wrapInJsonProxy(`https://www.xeno-canto.org/api/2/recordings?query=${raw_query}`)
+export function getApiUrl(parameters: XenoCantoParameters): string {
+    return wrapInJsonProxy(`https://www.xeno-canto.org/api/2/recordings?query=${parameters.query}&page=${parameters.pageNumber}`)
 }

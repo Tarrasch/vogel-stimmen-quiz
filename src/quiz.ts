@@ -1,56 +1,35 @@
 import { Bird } from "./model/species";
 import * as Species from "./model/species";
-import { Recording, XenoCantoApiResponse } from "./xeno_canto_api";
-import * as XenoCantoApi from "./xeno_canto_api";
+import { QuizDriver, QuizRound } from "./model/quiz_driver";
+import { Recording } from "./model/xeno_canto_api";
 
-interface QueryOptions {
-    birdQueryName: string,
-}
 
-function buildQuery(queryOptions: QueryOptions): string {
-    return `${queryOptions.birdQueryName} area:europe q:A type:song`
-}
-
-function getRandomInt(max: number) {
-    return Math.floor(Math.random() * max);
-}
-
-function selectRandomBird(birds: Bird[]): Bird {
-    return birds[getRandomInt(birds.length)];
-}
-
-function selectRandomRecording(response: XenoCantoApiResponse): Recording {
-    return response.recordings[getRandomInt(response.recordings.length)];
-}
-
-function updateHtmlElements(birdToGuess: Bird, birdOptions: Bird[], recording: Recording) {
-    let audio_element: HTMLAudioElement = document.getElementById('audio') as HTMLAudioElement;
+function updateHtmlElements(birdToGuess: Bird, birdsInQuiz: Bird[], recording: Recording) {
+    const audio_element: HTMLAudioElement = document.getElementById('audio') as HTMLAudioElement;
     audio_element.src = recording.soundFileUrl;
     audio_element.play();
 
-    let choicesDiv: HTMLDivElement = document.getElementById('choices') as HTMLDivElement;
-    for (let bird of birdOptions) {
-        let isCorrectAnswer = bird.queryName === birdToGuess.queryName;
-        let newButton: HTMLButtonElement = document.createElement("button") as HTMLButtonElement;
+    const choicesDiv: HTMLDivElement = document.getElementById('choices') as HTMLDivElement;
+    for (const bird of birdsInQuiz) {
+        const isCorrectAnswer = bird.queryName === birdToGuess.queryName;
+        const newButton: HTMLButtonElement = document.createElement("button") as HTMLButtonElement;
         newButton.textContent = bird.germanName;
         newButton.addEventListener('click', _ => {
-            let answerParagraph: HTMLParagraphElement = document.getElementById('congratulation-p') as HTMLParagraphElement;
+            const answerParagraph: HTMLParagraphElement = document.getElementById('congratulation-p') as HTMLParagraphElement;
             answerParagraph.textContent = `${bird.germanName} is ${isCorrectAnswer ? "the" : "NOT"} correct answer`;
         })
         choicesDiv.appendChild(newButton);
     }
 }
-console.log("Got here!");
-document.addEventListener("DOMContentLoaded", function () {
-    let params: URLSearchParams = new URLSearchParams(document.location.search.substring(1));
-    let birdOptions: Bird[] = Species.getBirdsFromSearchParamsOrAll(params);
-    let birdToGuess = selectRandomBird(birdOptions);
 
-    fetch(XenoCantoApi.getApiUrl(buildQuery({ birdQueryName: birdToGuess.queryName })))
-        .then(response => response.json())
-        .then(data => {
-            let response: XenoCantoApiResponse = XenoCantoApi.makeXenoCantoApiResponse(data);
-            let recording: Recording = selectRandomRecording(response)
-            updateHtmlElements(birdToGuess, birdOptions, recording);
+document.addEventListener("DOMContentLoaded", function () {
+    const params: URLSearchParams = new URLSearchParams(document.location.search.substring(1));
+    const birdsInQuiz: Bird[] = Species.getBirdsFromSearchParamsOrAll(params);
+
+    const driver: QuizDriver = new QuizDriver(birdsInQuiz);
+
+    driver.getNewRound()
+        .then((round: QuizRound) => {
+            updateHtmlElements(round.correctBird, birdsInQuiz, round.recording);
         });
 });
