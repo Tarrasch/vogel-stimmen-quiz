@@ -35,7 +35,7 @@ function updateQuizHtmlElements(birdToGuess: Bird, birdsInQuiz: Bird[], recordin
 
     const choicesDiv: HTMLDivElement = document.getElementById('choices') as HTMLDivElement;
     for (const bird of birdsInQuiz) {
-        const isCorrectAnswer = bird.queryName === birdToGuess.queryName;
+        const isCorrectAnswer = bird.scientificName === birdToGuess.scientificName;
         const newButton: HTMLButtonElement = document.createElement("button") as HTMLButtonElement;
         newButton.textContent = bird.germanName;
         newButton.addEventListener('click', _ => {

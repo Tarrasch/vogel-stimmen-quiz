@@ -61,7 +61,7 @@ class Fetcher {
         const maybeSavedValue = this.storage.maybeGetNumRecordings(birdIndex);
         if (!maybeSavedValue) {
             const response = await this.fetchApiResponse({
-                query: buildQuery({ birdQueryName: this.birdsInQuiz[birdIndex].queryName }),
+                query: buildQuery({ birdQueryName: this.birdsInQuiz[birdIndex].scientificName }),
                 pageNumber: 1,
             });
             this.storage.saveResult(birdIndex, response);
@@ -74,7 +74,7 @@ class Fetcher {
         const maybeSavedValue = this.storage.maybeGetBirdRecording(birdIndex, recordingIndex);
         if (!maybeSavedValue) {
             const response = await this.fetchApiResponse({
-                query: buildQuery({ birdQueryName: this.birdsInQuiz[birdIndex].queryName }),
+                query: buildQuery({ birdQueryName: this.birdsInQuiz[birdIndex].scientificName }),
                 pageNumber: recordingIndex / 100 + 1,
             });
             this.storage.saveResult(birdIndex, response);
