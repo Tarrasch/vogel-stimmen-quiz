@@ -1,19 +1,18 @@
 export interface Bird {
     scientificName: string;
     germanName: string;
-    searchParamCode: string;
 }
 
 export const BIRDS: Bird[] = [
-    { scientificName: "Parus Major", germanName: "Kohlmeise", searchParamCode: "km", },
-    { scientificName: "Cyanistes Caeruleus", germanName: "Blaumeise", searchParamCode: "bm", },
-    { scientificName: "Periparus ater", germanName: "Tannenmeise", searchParamCode: "tm", },
-    { scientificName: "Dendrocopos major", germanName: "Buntspecht", searchParamCode: "bs", },
-    { scientificName: "Troglodytes troglodytes", germanName: "Zaunkönig", searchParamCode: "zk", },
-    { scientificName: "Erithacus rubecula", germanName: "Rotkehlchen", searchParamCode: "rk", },
-    { scientificName: "Phylloscopus collybita", germanName: "Zilpzalp", searchParamCode: "zz", },
-    { scientificName: "Sitta europaea", germanName: "Kleiber", searchParamCode: "kl", },
-    { scientificName: "Garrulus glandarius", germanName: "Eichelhäher", searchParamCode: "eh", },
+    { scientificName: "Parus Major", germanName: "Kohlmeise", },
+    { scientificName: "Cyanistes Caeruleus", germanName: "Blaumeise", },
+    { scientificName: "Periparus Ater", germanName: "Tannenmeise", },
+    { scientificName: "Dendrocopos Major", germanName: "Buntspecht", },
+    { scientificName: "Troglodytes Troglodytes", germanName: "Zaunkönig", },
+    { scientificName: "Erithacus Rubecula", germanName: "Rotkehlchen", },
+    { scientificName: "Phylloscopus Collybita", germanName: "Zilpzalp", },
+    { scientificName: "Sitta Europaea", germanName: "Kleiber", },
+    { scientificName: "Garrulus Glandarius", germanName: "Eichelhäher", },
 ]
 
 export function getBirdsFromSearchParamsOrAll(params: URLSearchParams): Bird[] {
@@ -23,7 +22,7 @@ export function getBirdsFromSearchParamsOrAll(params: URLSearchParams): Bird[] {
     }
     let result: Bird[] = [];
     for (let part of searchParam.split(",")) {
-        const needle = findBirdBySearchParamCode(part);
+        const needle = findBirdByScientificName(part);
         if (needle != undefined) {
             result.push(needle);
         }
@@ -32,12 +31,16 @@ export function getBirdsFromSearchParamsOrAll(params: URLSearchParams): Bird[] {
 }
 
 export function getSearchParamStringFromBirds(birds: Bird[]): string {
-    return birds.map(bird => bird.searchParamCode).join(',');
+    return birds.map(bird => bird.scientificName).join(',');
 }
 
-function findBirdBySearchParamCode(searchParamCode: string): Bird | undefined {
+export function getUniqueName(bird: Bird): string {
+    return bird.scientificName.replace(" ", "-");
+}
+
+function findBirdByScientificName(maybeScientificName: string): Bird | undefined {
     for (let bird of BIRDS) {
-        if (searchParamCode === bird.searchParamCode) {
+        if (maybeScientificName === bird.scientificName) {
             return bird;
         }
     }

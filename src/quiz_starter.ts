@@ -1,4 +1,4 @@
-import { Bird, BIRDS, getSearchParamStringFromBirds } from "./model/species";
+import { Bird, BIRDS, getSearchParamStringFromBirds, getUniqueName } from "./model/species";
 
 function startQuiz(): void {
     let url = new URL("./quiz.html", document.baseURI);
@@ -6,10 +6,14 @@ function startQuiz(): void {
     document.location.href = url.href;
 }
 
+function getCheckBoxId(bird: Bird) {
+    return `specie-${getUniqueName(bird)}`;
+}
+
 function getSelectedSpecies(): Bird[] {
     const result: Bird[] = [];
     for (let bird of BIRDS) {
-        const checkbox = document.getElementById(`specie-${bird.searchParamCode}`) as HTMLInputElement;
+        const checkbox = document.getElementById(getCheckBoxId(bird)) as HTMLInputElement;
         if (checkbox.checked) {
             result.push(bird);
         }
@@ -23,7 +27,7 @@ function getDivWithCheckBox(bird: Bird): HTMLDivElement {
     const label = document.createElement("label") as HTMLLabelElement;
 
     checkbox.type = 'checkbox';
-    checkbox.id = `specie-${bird.searchParamCode}`;
+    checkbox.id = getCheckBoxId(bird);
     label.innerText = bird.germanName;
     div.appendChild(checkbox)
     div.appendChild(label);
