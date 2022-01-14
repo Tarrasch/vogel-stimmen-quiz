@@ -7,7 +7,7 @@ function prepareNewRound(driver: QuizDriver) {
     clearDynamicQuizHtmlElements();
     driver.getNewRound()
         .then((round: QuizRound) => {
-            updateQuizHtmlElements(round.correctBird, driver.birdsInQuiz, round.recording);
+            updateQuizHtmlElements(round.correctBird, round.birdOptions, round.recording);
         });
 }
 
@@ -27,14 +27,14 @@ function clearDynamicQuizHtmlElements(): void {
     answerParagraph.textContent = "";
 }
 
-function updateQuizHtmlElements(birdToGuess: Bird, birdsInQuiz: Bird[], recording: Recording) {
+function updateQuizHtmlElements(birdToGuess: Bird, birdOptions: Bird[], recording: Recording) {
     clearDynamicQuizHtmlElements();
     const audioElement: HTMLAudioElement = document.getElementById('audio') as HTMLAudioElement;
     audioElement.src = recording.soundFileUrl;
     audioElement.play();
 
     const choicesDiv: HTMLDivElement = document.getElementById('choices') as HTMLDivElement;
-    for (const bird of birdsInQuiz) {
+    for (const bird of birdOptions) {
         const isCorrectAnswer = bird.scientificName === birdToGuess.scientificName;
         const newButton: HTMLButtonElement = document.createElement("button") as HTMLButtonElement;
         newButton.textContent = bird.germanName;
@@ -49,7 +49,7 @@ function updateQuizHtmlElements(birdToGuess: Bird, birdsInQuiz: Bird[], recordin
 document.addEventListener("DOMContentLoaded", function () {
     const params: URLSearchParams = new URLSearchParams(document.location.search.substring(1));
     const birdsInQuiz: Bird[] = Species.getBirdsFromSearchParamsOrAll(params);
-    const driver: QuizDriver = new QuizDriver(birdsInQuiz);
+    const driver: QuizDriver = new QuizDriver(birdsInQuiz, Math.min(birdsInQuiz.length, 4));
 
     setStaticHtmlElements(driver);
     prepareNewRound(driver);

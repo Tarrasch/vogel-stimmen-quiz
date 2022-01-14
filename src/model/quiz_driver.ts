@@ -9,12 +9,29 @@ function buildQuery(queryOptions: QueryOptions): string {
     return `${queryOptions.birdQueryName} area:europe q:A type:song`
 }
 
+function getRandomInts(max: number, outputLength: number): number[] {
+    if (outputLength >= max) {
+        return [-999999];
+    }
+    const output: number[] = Array(max).fill(undefined).map((_, ix) => ix);
+    for (let i: number = 0; i < outputLength - 1; i++) {
+        const j: number = i + getRandomInt(max - i);
+        const val_at_i = output[i];
+        const val_at_j = output[j];
+        output[i] = val_at_j;
+        output[j] = val_at_i;
+    }
+
+    return output.slice(0, outputLength);
+}
+
 function getRandomInt(max: number): number {
     return Math.floor(Math.random() * max);
 }
 
 export interface QuizRound {
     correctBird: Bird,
+    birdOptions: Bird[],
     recording: Recording,
 }
 
@@ -93,19 +110,24 @@ class Fetcher {
 export class QuizDriver {
     readonly birdsInQuiz: Bird[];
     readonly fetcher: Fetcher;
+    readonly numOptions: number;
 
-    constructor(birdsInQuiz: Bird[]) {
+    constructor(birdsInQuiz: Bird[], numOptions: number) {
         this.birdsInQuiz = birdsInQuiz;
         this.fetcher = new Fetcher(birdsInQuiz);
+        this.numOptions = numOptions;
     }
 
     async getNewRound(): Promise<QuizRound> {
-        const birdIndex = getRandomInt(this.birdsInQuiz.length);
+        const randomIndexes: number[] = getRandomInts(this.birdsInQuiz.length, this.numOptions);
+        const options: Bird[] = randomIndexes.map((index) => this.birdsInQuiz[index]);
+        const birdIndex = randomIndexes[getRandomInt(this.numOptions)];
         const recordingIndex = getRandomInt(await this.fetcher.getNumRecordingsInXenoCanto(birdIndex));
         const recording = await this.fetcher.getBirdRecording(birdIndex, recordingIndex);
         return {
             correctBird: this.birdsInQuiz[birdIndex],
             recording: recording,
+            birdOptions: options,
         };
     }
 }
