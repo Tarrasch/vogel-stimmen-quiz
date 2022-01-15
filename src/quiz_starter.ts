@@ -1,4 +1,5 @@
-import { Bird, BIRDS, getSearchParamStringFromBirds, getUniqueName } from "./model/species";
+import { Bird, BIRDS, getUniqueName } from "./model/species";
+import { getSearchParamStringFromBirds } from "./model/search_params";
 
 function startQuiz(): void {
     let url = new URL("./quiz.html", document.baseURI);

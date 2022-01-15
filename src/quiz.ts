@@ -1,7 +1,7 @@
 import { Bird } from "./model/species";
-import * as Species from "./model/species";
 import { QuizDriver, QuizRound } from "./model/quiz_driver";
 import { Recording } from "./model/xeno_canto_api";
+import { getQuizSearchParams, QuizSearchParams } from "./model/search_params";
 
 function prepareNewRound(driver: QuizDriver) {
     clearDynamicQuizHtmlElements();
@@ -48,7 +48,8 @@ function updateQuizHtmlElements(birdToGuess: Bird, birdOptions: Bird[], recordin
 
 document.addEventListener("DOMContentLoaded", function () {
     const params: URLSearchParams = new URLSearchParams(document.location.search.substring(1));
-    const birdsInQuiz: Bird[] = Species.getBirdsFromSearchParamsOrAll(params);
+    const quizSearchParams: QuizSearchParams = getQuizSearchParams(params);
+    const birdsInQuiz: Bird[] = quizSearchParams.species;
     const driver: QuizDriver = new QuizDriver(birdsInQuiz, Math.min(birdsInQuiz.length, 4));
 
     setStaticHtmlElements(driver);
