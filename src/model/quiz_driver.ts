@@ -10,7 +10,8 @@ function buildQuery(queryOptions: QueryOptions): string {
 }
 
 function getRandomInts(max: number, outputLength: number): number[] {
-    if (outputLength >= max) {
+    if (outputLength > max) {
+        console.log("ERROR!!! outputLength > max");
         return [-999999];
     }
     const output: number[] = Array(max).fill(undefined).map((_, ix) => ix);
