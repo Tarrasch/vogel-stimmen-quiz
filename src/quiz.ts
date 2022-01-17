@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const params: URLSearchParams = new URLSearchParams(document.location.search.substring(1));
     const quizSearchParams: QuizSearchParams = getQuizSearchParams(params);
     const birdsInQuiz: Bird[] = quizSearchParams.species;
-    const driver: QuizDriver = new QuizDriver(birdsInQuiz, Math.min(birdsInQuiz.length, 4));
+    const driver: QuizDriver = new QuizDriver(birdsInQuiz, Math.min(birdsInQuiz.length, quizSearchParams.numOptions));
 
     setStaticHtmlElements(driver);
     prepareNewRound(driver);

@@ -2,11 +2,13 @@ import { Bird, BIRDS } from "./species";
 
 export interface QuizSearchParams {
     species: Bird[];
+    numOptions: number;
 }
 
 export function getQuizSearchParams(params: URLSearchParams): QuizSearchParams {
     return {
-        species: getBirdsFromSearchParamsOrAll(params)
+        species: getBirdsFromSearchParamsOrAll(params),
+        numOptions: getNumOptionsFromSearchParamsOrDefault4(params),
     }
 }
 
@@ -36,4 +38,12 @@ function findBirdByScientificName(maybeScientificName: string): Bird | undefined
         }
     }
     return undefined;
+}
+
+function getNumOptionsFromSearchParamsOrDefault4(params: URLSearchParams): number {
+    const parsed :number = parseInt(params.get("numOptions") || '4');
+    if(Number.isNaN(parsed)) {
+        return 4;
+    }
+    return parsed;
 }
