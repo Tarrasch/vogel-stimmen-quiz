@@ -3,6 +3,13 @@ import { QuizDriver, QuizRound } from "./model/quiz_driver";
 import { Recording } from "./model/xeno_canto_api";
 import { getQuizSearchParams, QuizSearchParams } from "./model/search_params";
 
+function setEditQuizButton(params: URLSearchParams) {
+    const url:URL = new URL("quiz_starter.html", document.URL);
+    url.search = params.toString();
+    const anchor: HTMLAnchorElement = document.getElementById("edit-quiz") as HTMLAnchorElement;
+    anchor.setAttribute("href", url.href);
+}
+
 function prepareNewRound(driver: QuizDriver) {
     clearDynamicQuizHtmlElements();
     driver.getNewRound()
@@ -52,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const birdsInQuiz: Bird[] = quizSearchParams.species;
     const driver: QuizDriver = new QuizDriver(birdsInQuiz, Math.min(birdsInQuiz.length, quizSearchParams.numOptions));
 
+    setEditQuizButton(params);
     setStaticHtmlElements(driver);
     prepareNewRound(driver);
 });
