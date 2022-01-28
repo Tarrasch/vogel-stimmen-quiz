@@ -54,7 +54,7 @@ function updateQuizHtmlElements(birdToGuess: Bird, birdOptions: Bird[], recordin
         const newButton: HTMLButtonElement = document.createElement("button") as HTMLButtonElement;
         newButton.textContent = bird.germanName;
         newButton.addEventListener('click', _ => {
-            answerParagraph().textContent = `${bird.germanName} is ${isCorrectAnswer ? "the" : "NOT"} correct answer`;
+            answerParagraph().textContent = `${bird.germanName} ist ${isCorrectAnswer ? "RICHTIG" : "FALSCH"}`;
             if(isCorrectAnswer) {
                 recordistAttributionAnchor().textContent = `Aufname XC${recording.id} [${recording.recorderName}]`;
                 recordistAttributionAnchor().href = `https:${recording.url}`;
