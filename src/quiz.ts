@@ -3,6 +3,13 @@ import { QuizDriver, QuizRound } from "./model/quiz_driver";
 import { Recording } from "./model/xeno_canto_api";
 import { getQuizSearchParams, QuizSearchParams } from "./model/search_params";
 
+function answerParagraph(): HTMLParagraphElement {
+    return document.getElementById('answer-p') as HTMLParagraphElement;
+}
+function recordistAttributionAnchor(): HTMLAnchorElement {
+    return document.getElementById('recordist-attribution') as HTMLAnchorElement;
+}
+
 function setEditQuizButton(params: URLSearchParams) {
     const url:URL = new URL("quiz_starter.html", document.URL);
     url.search = params.toString();
@@ -30,8 +37,9 @@ function clearDynamicQuizHtmlElements(): void {
     while (choicesDiv.firstChild) {
         choicesDiv.removeChild(choicesDiv.firstChild);
     }
-    const answerParagraph: HTMLParagraphElement = document.getElementById('congratulation-p') as HTMLParagraphElement;
-    answerParagraph.textContent = "";
+    answerParagraph().textContent = "";
+    recordistAttributionAnchor().textContent = "";
+    recordistAttributionAnchor().href = "";
 }
 
 function updateQuizHtmlElements(birdToGuess: Bird, birdOptions: Bird[], recording: Recording) {
@@ -46,8 +54,11 @@ function updateQuizHtmlElements(birdToGuess: Bird, birdOptions: Bird[], recordin
         const newButton: HTMLButtonElement = document.createElement("button") as HTMLButtonElement;
         newButton.textContent = bird.germanName;
         newButton.addEventListener('click', _ => {
-            const answerParagraph: HTMLParagraphElement = document.getElementById('congratulation-p') as HTMLParagraphElement;
-            answerParagraph.textContent = `${bird.germanName} is ${isCorrectAnswer ? "the" : "NOT"} correct answer`;
+            answerParagraph().textContent = `${bird.germanName} is ${isCorrectAnswer ? "the" : "NOT"} correct answer`;
+            if(isCorrectAnswer) {
+                recordistAttributionAnchor().textContent = `Aufname XC${recording.id} [${recording.recorderName}]`;
+                recordistAttributionAnchor().href = `https:${recording.url}`;
+            }
         });
         choicesDiv.appendChild(newButton);
     }

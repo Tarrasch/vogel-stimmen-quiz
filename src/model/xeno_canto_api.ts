@@ -4,6 +4,8 @@ export interface Recording {
     englishName: string;
     genericName: string;
     scientificName: string;
+    id: string;
+    url: string;
 }
 
 export interface XenoCantoApiResponse {
@@ -25,6 +27,8 @@ function makeRecording(input: any): Recording {
         englishName: input.en,
         genericName: input.gen,
         scientificName: input.sp,
+        id: input.id,
+        url: input.url,
     };
 }
 
