@@ -41,7 +41,7 @@ export interface QuizRound {
 class Storage {
     readonly birdsInQuiz: Bird[];
     readonly numRecordingsMap: Map<number, number>;
-    readonly recordingsMap: Map<[number, number], Recording>;
+    readonly recordingsMap: Map<string, Recording>;
 
     constructor(birdsInQuiz: Bird[]) {
         this.birdsInQuiz = birdsInQuiz;
@@ -54,7 +54,7 @@ class Storage {
     }
 
     maybeGetBirdRecording(birdIndex: number, recordingIndex: number): Recording | undefined {
-        return this.recordingsMap.get([birdIndex, recordingIndex]);
+        return this.recordingsMap.get(`${birdIndex}-${recordingIndex}`);
     }
 
     saveResult(birdIndex: number, result: XenoCantoApiResponse): void {
@@ -62,7 +62,7 @@ class Storage {
         for (let index = 0; index < result.recordings.length; index++) {
             const recording: Recording = result.recordings[index];
             const recordingIndex: number = index + (result.page - 1) * MAX_RESULTS_PER_QUERY;
-            this.recordingsMap.set([birdIndex, recordingIndex], recording);
+            this.recordingsMap.set(`${birdIndex}-${recordingIndex}`, recording);
         }
     };
 }
@@ -95,7 +95,7 @@ class Fetcher {
         if (!maybeSavedValue) {
             const response = await this.fetchApiResponse({
                 query: buildQuery({ birdQueryName: this.birdsInQuiz[birdIndex].scientificName }),
-                pageNumber: recordingIndex / MAX_RESULTS_PER_QUERY + 1,
+                pageNumber: Math.trunc(recordingIndex / MAX_RESULTS_PER_QUERY + 1),
             });
             this.storage.saveResult(birdIndex, response);
             return response.recordings[recordingIndex % MAX_RESULTS_PER_QUERY]
@@ -121,12 +121,27 @@ export class QuizDriver {
         this.numOptions = numOptions;
     }
 
+    async getGoodBirdRecording(birdIndex: number): Promise<Recording> {
+        const numRecordings = await this.fetcher.getNumRecordingsInXenoCanto(birdIndex);
+        const startIndex: number = getRandomInt(numRecordings);
+        let recordingIndex: number = startIndex;
+        let count: number = 0;
+        while(true) {
+            const recording:Recording = await this.fetcher.getBirdRecording(birdIndex, recordingIndex);
+            const shouldStopLooping: boolean = count >= 30;
+            if(recording.also.length === 0 || shouldStopLooping) {
+                return recording;
+            }
+            recordingIndex = (recordingIndex + 1) % numRecordings;
+            count++;
+        }
+    }
+
     async getNewRound(): Promise<QuizRound> {
         const randomIndexes: number[] = getRandomInts(this.birdsInQuiz.length, this.numOptions);
         const options: Bird[] = randomIndexes.map((index) => this.birdsInQuiz[index]);
         const birdIndex = randomIndexes[getRandomInt(this.numOptions)];
-        const recordingIndex = getRandomInt(await this.fetcher.getNumRecordingsInXenoCanto(birdIndex));
-        const recording = await this.fetcher.getBirdRecording(birdIndex, recordingIndex);
+        const recording: Recording = await this.getGoodBirdRecording(birdIndex);
         return {
             correctBird: this.birdsInQuiz[birdIndex],
             recording: recording,

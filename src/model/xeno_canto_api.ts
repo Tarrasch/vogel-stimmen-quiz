@@ -6,6 +6,7 @@ export interface Recording {
     scientificName: string;
     id: string;
     url: string;
+    also: string[];
 }
 
 export interface XenoCantoApiResponse {
@@ -20,6 +21,13 @@ export interface XenoCantoParameters {
     pageNumber: number,  // Note: xeno-canto API uses a 1 indexed number here.
 }
 
+function cleanArrayFromEmptySingleton(x: string[]):string[] {
+    if(x.length === 1 && x[0] === "") {
+        return [];
+    }
+    return x;
+}
+
 function makeRecording(input: any): Recording {
     return {
         soundFileUrl: input.file,
@@ -29,6 +37,7 @@ function makeRecording(input: any): Recording {
         scientificName: input.sp,
         id: input.id,
         url: input.url,
+        also: cleanArrayFromEmptySingleton(input.also),
     };
 }
 
@@ -42,7 +51,7 @@ export function makeXenoCantoApiResponse(input: any): XenoCantoApiResponse {
 }
 
 function wrapInJsonProxy(url: string): string {
-    return `https://jsonp.afeld.me/?url=${url}`
+    return `https://jsonp.afeld.me/?url=${encodeURIComponent(url)}`
 }
 
 export function getApiUrl(parameters: XenoCantoParameters): string {
