@@ -1,6 +1,8 @@
 import { Bird } from "./species";
 import { getApiUrl, makeXenoCantoApiResponse, Recording, XenoCantoApiResponse, XenoCantoParameters } from "./xeno_canto_api";
 
+const MAX_RESULTS_PER_QUERY = 500;
+
 interface QueryOptions {
     birdQueryName: string,
 }
@@ -59,7 +61,7 @@ class Storage {
         this.numRecordingsMap.set(birdIndex, result.numRecordings);
         for (let index = 0; index < result.recordings.length; index++) {
             const recording: Recording = result.recordings[index];
-            const recordingIndex: number = index + (result.page - 1) * 100;
+            const recordingIndex: number = index + (result.page - 1) * MAX_RESULTS_PER_QUERY;
             this.recordingsMap.set([birdIndex, recordingIndex], recording);
         }
     };
@@ -93,10 +95,10 @@ class Fetcher {
         if (!maybeSavedValue) {
             const response = await this.fetchApiResponse({
                 query: buildQuery({ birdQueryName: this.birdsInQuiz[birdIndex].scientificName }),
-                pageNumber: recordingIndex / 100 + 1,
+                pageNumber: recordingIndex / MAX_RESULTS_PER_QUERY + 1,
             });
             this.storage.saveResult(birdIndex, response);
-            return response.recordings[recordingIndex % 100]
+            return response.recordings[recordingIndex % MAX_RESULTS_PER_QUERY]
         };
         return maybeSavedValue;
     }
