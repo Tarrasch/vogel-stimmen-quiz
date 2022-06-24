@@ -50,10 +50,8 @@ export function makeXenoCantoApiResponse(input: any): XenoCantoApiResponse {
     }
 }
 
-function wrapInJsonProxy(url: string): string {
-    return `https://jsonp.afeld.me/?url=${encodeURIComponent(url)}`
-}
-
 export function getApiUrl(parameters: XenoCantoParameters): string {
-    return wrapInJsonProxy(`https://www.xeno-canto.org/api/2/recordings?query=${parameters.query}&page=${parameters.pageNumber}`)
+    // The commented line is used when debugging.
+    // return `http://127.0.0.1:5000/simple-xeno-canto?query=${parameters.query}&page=${parameters.pageNumber}`
+    return `https://famous-hull-347520.ue.r.appspot.com/simple-xeno-canto?query=${parameters.query}&page=${parameters.pageNumber}`
 }
