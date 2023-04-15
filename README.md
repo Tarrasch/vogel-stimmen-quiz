@@ -10,7 +10,12 @@ Play at https://www.arashrouhani.com/vogel-stimmen-quiz/quiz.html
 
 For this to work I had to install the following like this:
 
-    canhaz node-typescript rollup node-rollup-plugin-terser
+    canhaz node-typescript rollup npm
+    
+Yes I need `npm` now. Once I had npm, I had to install `@rollup/plugin-terser`
+
+    npm clean-install @rollup/plugin-terser
+
 
 Assuming `canhaz` is mapped to `sudo apt-get install`
 
