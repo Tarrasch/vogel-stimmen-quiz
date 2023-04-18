@@ -21,6 +21,7 @@ function prepareNewRound(driver: QuizDriver) {
     clearDynamicQuizHtmlElements();
     driver.getNewRound()
         .then((round: QuizRound) => {
+            driver.preFetchNextRound();
             updateQuizHtmlElements(round.correctBird, round.birdOptions, round.recording);
         });
 }

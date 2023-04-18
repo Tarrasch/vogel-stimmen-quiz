@@ -1,3 +1,4 @@
+import { RandomDataForQuiz, getRandomDataForQuiz } from "./random";
 import { Bird } from "./species";
 import { getApiUrl, makeXenoCantoApiResponse, Recording, XenoCantoApiResponse, XenoCantoParameters } from "./xeno_canto_api";
 
@@ -9,27 +10,6 @@ interface QueryOptions {
 
 function buildQuery(queryOptions: QueryOptions): string {
     return `${queryOptions.birdQueryName} area:europe q:A type:song`
-}
-
-function getRandomInts(max: number, outputLength: number): number[] {
-    if (outputLength > max) {
-        console.log("ERROR!!! outputLength > max");
-        return [-999999];
-    }
-    const output: number[] = Array(max).fill(undefined).map((_, ix) => ix);
-    for (let i: number = 0; i < outputLength - 1; i++) {
-        const j: number = i + getRandomInt(max - i);
-        const val_at_i = output[i];
-        const val_at_j = output[j];
-        output[i] = val_at_j;
-        output[j] = val_at_i;
-    }
-
-    return output.slice(0, outputLength);
-}
-
-function getRandomInt(max: number): number {
-    return Math.floor(Math.random() * max);
 }
 
 export interface QuizRound {
@@ -114,22 +94,26 @@ export class QuizDriver {
     readonly birdsInQuiz: Bird[];
     readonly fetcher: Fetcher;
     readonly numOptions: number;
+    nextRandomData: RandomDataForQuiz;
 
     constructor(birdsInQuiz: Bird[], numOptions: number) {
         this.birdsInQuiz = birdsInQuiz;
         this.fetcher = new Fetcher(birdsInQuiz);
         this.numOptions = numOptions;
+        const numBirdsInQuiz = birdsInQuiz.length;
+        this.nextRandomData = getRandomDataForQuiz({ numBirdsInQuiz, numOptions });
     }
 
-    async getGoodBirdRecording(birdIndex: number): Promise<Recording> {
+    async getGoodBirdRecording(randomData: RandomDataForQuiz): Promise<Recording> {
+        const birdIndex: number = randomData.correctOptionIndex;
         const numRecordings = await this.fetcher.getNumRecordingsInXenoCanto(birdIndex);
-        const startIndex: number = getRandomInt(numRecordings);
+        const startIndex: number = randomData.getStartIndexFromNumRecordings(numRecordings);
         let recordingIndex: number = startIndex;
         let count: number = 0;
-        while(true) {
-            const recording:Recording = await this.fetcher.getBirdRecording(birdIndex, recordingIndex);
+        while (true) {
+            const recording: Recording = await this.fetcher.getBirdRecording(birdIndex, recordingIndex);
             const shouldStopLooping: boolean = count >= 30;
-            if(recording.also.length === 0 || shouldStopLooping) {
+            if (recording.also.length === 0 || shouldStopLooping) {
                 return recording;
             }
             recordingIndex = (recordingIndex + 1) % numRecordings;
@@ -137,15 +121,23 @@ export class QuizDriver {
         }
     }
 
-    async getNewRound(): Promise<QuizRound> {
-        const randomIndexes: number[] = getRandomInts(this.birdsInQuiz.length, this.numOptions);
-        const options: Bird[] = randomIndexes.map((index) => this.birdsInQuiz[index]);
-        const birdIndex = randomIndexes[getRandomInt(this.numOptions)];
-        const recording: Recording = await this.getGoodBirdRecording(birdIndex);
+    async getNewRoundUsingRandomData(randomData: RandomDataForQuiz): Promise<QuizRound> {
+        const options: Bird[] = randomData.optionIndexes.map((index) => this.birdsInQuiz[index]);
+        const recording: Recording = await this.getGoodBirdRecording(randomData);
         return {
-            correctBird: this.birdsInQuiz[birdIndex],
+            correctBird: this.birdsInQuiz[randomData.correctOptionIndex],
             recording: recording,
             birdOptions: options,
         };
+    }
+
+    preFetchNextRound(): void {
+        this.getNewRoundUsingRandomData(this.nextRandomData);
+    }
+
+    async getNewRound(): Promise<QuizRound> {
+        const result: QuizRound = await this.getNewRoundUsingRandomData(this.nextRandomData);
+        this.nextRandomData = getRandomDataForQuiz({ numBirdsInQuiz: this.birdsInQuiz.length, numOptions: this.numOptions });
+        return result;
     }
 }
