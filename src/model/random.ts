@@ -1,4 +1,11 @@
 
+function fisherYatesShuffle(array: number[]) {
+    for (let i: number = 0; i < array.length - 1; i++) {
+        const j: number = i + getRandomInt(array.length - i);
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
 function getRandomInts(max: number, outputLength: number): number[] {
     if (outputLength > max) {
@@ -6,13 +13,7 @@ function getRandomInts(max: number, outputLength: number): number[] {
         return [-999999];
     }
     const output: number[] = Array(max).fill(undefined).map((_, ix) => ix);
-    for (let i: number = 0; i < outputLength - 1; i++) {
-        const j: number = i + getRandomInt(max - i);
-        const val_at_i = output[i];
-        const val_at_j = output[j];
-        output[i] = val_at_j;
-        output[j] = val_at_i;
-    }
+    fisherYatesShuffle(output);  // This is O(n) independent of outputLength.
 
     return output.slice(0, outputLength);
 }
