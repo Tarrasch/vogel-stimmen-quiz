@@ -9,6 +9,23 @@ function answerParagraph(): HTMLParagraphElement {
 function recordistAttributionAnchor(): HTMLAnchorElement {
     return document.getElementById('recordist-attribution') as HTMLAnchorElement;
 }
+function choiceButtons(): HTMLButtonElement[] {
+    return Array.from(document.getElementsByClassName('choice-button') as HTMLCollectionOf<HTMLButtonElement>);
+}
+
+function clearAllEventHandlers(button: HTMLButtonElement) {
+    // https://stackoverflow.com/a/39026635/621449
+    button.outerHTML = button.outerHTML;
+}
+
+function createEmptyChoiceButtons(numButtons: number): void {
+    const choicesDiv: HTMLDivElement = document.getElementById('choices') as HTMLDivElement;
+    for (let i = 0; i < numButtons; i++) {
+        const button: HTMLButtonElement = document.createElement('button') as HTMLButtonElement;
+        button.className = 'choice-button';
+        choicesDiv.appendChild(button);
+    }
+}
 
 function setEditQuizButton(params: URLSearchParams) {
     const url:URL = new URL("quiz_starter.html", document.URL);
@@ -34,9 +51,9 @@ function setStaticHtmlElements(driver: QuizDriver) {
 }
 
 function clearDynamicQuizHtmlElements(): void {
-    const choicesDiv: HTMLDivElement = document.getElementById('choices') as HTMLDivElement;
-    while (choicesDiv.firstChild) {
-        choicesDiv.removeChild(choicesDiv.firstChild);
+    for(const button of choiceButtons()) {
+        button.textContent = "";
+        clearAllEventHandlers(button);
     }
     answerParagraph().textContent = "";
     recordistAttributionAnchor().textContent = "";
@@ -49,19 +66,19 @@ function updateQuizHtmlElements(birdToGuess: Bird, birdOptions: Bird[], recordin
     audioElement.src = recording.soundFileUrl;
     audioElement.play();
 
-    const choicesDiv: HTMLDivElement = document.getElementById('choices') as HTMLDivElement;
-    for (const bird of birdOptions) {
+
+    for (let i = 0; i < birdOptions.length; i++) {
+        const bird: Bird = birdOptions[i];
+        const button: HTMLButtonElement = choiceButtons()[i];
         const isCorrectAnswer = bird.scientificName === birdToGuess.scientificName;
-        const newButton: HTMLButtonElement = document.createElement("button") as HTMLButtonElement;
-        newButton.textContent = bird.germanName;
-        newButton.addEventListener('click', _ => {
+        button.textContent = bird.germanName;
+        button.addEventListener('click', _ => {
             answerParagraph().textContent = `${bird.germanName} ist ${isCorrectAnswer ? "RICHTIG" : "FALSCH"}`;
             if(isCorrectAnswer) {
                 recordistAttributionAnchor().textContent = `Aufname XC${recording.id} [${recording.recorderName}]`;
                 recordistAttributionAnchor().href = `https:${recording.url}`;
             }
         });
-        choicesDiv.appendChild(newButton);
     }
 }
 
@@ -71,6 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const birdsInQuiz: Bird[] = quizSearchParams.species;
     const driver: QuizDriver = new QuizDriver(birdsInQuiz, Math.min(birdsInQuiz.length, quizSearchParams.numOptions));
 
+    createEmptyChoiceButtons(driver.numOptions);
     setEditQuizButton(params);
     setStaticHtmlElements(driver);
     prepareNewRound(driver);
