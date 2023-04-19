@@ -28,7 +28,7 @@ function createEmptyChoiceButtons(numButtons: number): void {
 }
 
 function setEditQuizButton(params: URLSearchParams) {
-    const url:URL = new URL("quiz_starter.html", document.URL);
+    const url: URL = new URL("quiz_starter.html", document.URL);
     url.search = params.toString();
     const anchor: HTMLAnchorElement = document.getElementById("edit-quiz") as HTMLAnchorElement;
     anchor.setAttribute("href", url.href);
@@ -51,13 +51,26 @@ function setStaticHtmlElements(driver: QuizDriver) {
 }
 
 function clearDynamicQuizHtmlElements(): void {
-    for(const button of choiceButtons()) {
+    for (const button of choiceButtons()) {
+        button.disabled = false;
         button.textContent = "";
         clearAllEventHandlers(button);
     }
     answerParagraph().textContent = "";
     recordistAttributionAnchor().textContent = "";
     recordistAttributionAnchor().href = "";
+}
+
+function handleUserGuess(bird: Bird, isCorrectAnswer: boolean, recording: Recording) {
+    answerParagraph().textContent = `${bird.germanName} ist ${isCorrectAnswer ? "RICHTIG" : "FALSCH"}`;
+    if (isCorrectAnswer) {
+        recordistAttributionAnchor().textContent = `Aufname XC${recording.id} [${recording.recorderName}]`;
+        recordistAttributionAnchor().href = `https:${recording.url}`;
+        const otherButtons = choiceButtons().filter(button => button.textContent !== bird.germanName);
+        for (const button of otherButtons) {
+            button.disabled = true;
+        }
+    }
 }
 
 function updateQuizHtmlElements(birdToGuess: Bird, birdOptions: Bird[], recording: Recording) {
@@ -73,11 +86,7 @@ function updateQuizHtmlElements(birdToGuess: Bird, birdOptions: Bird[], recordin
         const isCorrectAnswer = bird.scientificName === birdToGuess.scientificName;
         button.textContent = bird.germanName;
         button.addEventListener('click', _ => {
-            answerParagraph().textContent = `${bird.germanName} ist ${isCorrectAnswer ? "RICHTIG" : "FALSCH"}`;
-            if(isCorrectAnswer) {
-                recordistAttributionAnchor().textContent = `Aufname XC${recording.id} [${recording.recorderName}]`;
-                recordistAttributionAnchor().href = `https:${recording.url}`;
-            }
+            handleUserGuess(bird, isCorrectAnswer, recording);
         });
     }
 }
