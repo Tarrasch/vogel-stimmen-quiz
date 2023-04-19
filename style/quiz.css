@@ -13,9 +13,32 @@ body {
   height: 100px;
   margin-bottom: 0.5rem;
   flex-basis: 46%;
+  font-size: 1.0rem;
 }
 @media (min-width: 600px) {
   #choices button {
     flex-basis: 22%;
   }
+}
+#results {  
+  padding: 1rem;
+  background: lightskyblue;
+  border-radius: 0.5rem;
+  min-height: 80px;
+}
+#controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+#next-question {
+  padding: 0.5rem 1rem;
+  background: lightgreen;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+#edit-quiz {
+  margin-top: auto;
 }
