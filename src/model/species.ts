@@ -23,6 +23,7 @@ export const BIRDS: Bird[] = [
     { scientificName: "Regulus Ignicapilla", germanName: "Sommergoldhähnchen", difficulty: BirdDifficulty.HARD },
     { scientificName: "Regulus Regulus", germanName: "Wintergoldhähnchen", difficulty: BirdDifficulty.HARD },
     { scientificName: "Troglodytes Troglodytes", germanName: "Zaunkönig", difficulty: BirdDifficulty.MEDIUM },
+    { scientificName: "Sitta Europaea", germanName: "Kleiber", difficulty: BirdDifficulty.MEDIUM },
 ];
 
 // I've not included the following birds because they seem to have only calls and not songs.
